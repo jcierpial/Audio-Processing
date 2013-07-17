@@ -1,0 +1,283 @@
+function varargout = rec02_cerps_PROJ04(varargin)
+% REC02_CERPS_PROJ04 M-file for rec02_cerps_PROJ04.fig
+%      REC02_CERPS_PROJ04, by itself, creates a new REC02_CERPS_PROJ04 or raises the existing
+%      singleton*.
+%
+%      H = REC02_CERPS_PROJ04 returns the handle to a new REC02_CERPS_PROJ04 or the handle to
+%      the existing singleton*.
+%
+%      REC02_CERPS_PROJ04('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in REC02_CERPS_PROJ04.M with the given input arguments.
+%
+%      REC02_CERPS_PROJ04('Property','Value',...) creates a new REC02_CERPS_PROJ04 or raises the
+%      existing singleton*.  Starting from the left, property value pairs are
+%      applied to the GUI before rec02_cerps_PROJ04_OpeningFcn gets called.  An
+%      unrecognized property name or invalid value makes property application
+%      stop.  All inputs are passed to rec02_cerps_PROJ04_OpeningFcn via varargin.
+%
+%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
+%      instance to run (singleton)".
+%
+% See also: GUIDE, GUIDATA, GUIHANDLES
+
+% Edit the above text to modify the response to help rec02_cerps_PROJ04
+
+% Last Modified by GUIDE v2.5 05-Dec-2010 16:32:36
+
+% Begin initialization code - DO NOT EDIT
+gui_Singleton = 1;
+gui_State = struct('gui_Name',       mfilename, ...
+                   'gui_Singleton',  gui_Singleton, ...
+                   'gui_OpeningFcn', @rec02_cerps_PROJ04_OpeningFcn, ...
+                   'gui_OutputFcn',  @rec02_cerps_PROJ04_OutputFcn, ...
+                   'gui_LayoutFcn',  [] , ...
+                   'gui_Callback',   []);
+if nargin && ischar(varargin{1})
+    gui_State.gui_Callback = str2func(varargin{1});
+end
+
+if nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+else
+    gui_mainfcn(gui_State, varargin{:});
+end
+% End initialization code - DO NOT EDIT
+
+
+% --- Executes just before rec02_cerps_PROJ04 is made visible.
+function rec02_cerps_PROJ04_OpeningFcn(hObject, eventdata, handles, varargin)
+% This function has no output args, see OutputFcn.
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% varargin   command line arguments to rec02_cerps_PROJ04 (see VARARGIN)
+
+% Choose default command line output for rec02_cerps_PROJ04
+handles.output = hObject;
+
+% Update handles structure
+guidata(hObject, handles);
+
+% UIWAIT makes rec02_cerps_PROJ04 wait for user response (see UIRESUME)
+% uiwait(handles.figure1);
+
+
+% --- Outputs from this function are returned to the command line.
+function varargout = rec02_cerps_PROJ04_OutputFcn(hObject, eventdata, handles) 
+% varargout  cell array for returning output args (see VARARGOUT);
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get default command line output from handles structure
+varargout{1} = handles.output;
+
+
+
+% --- Executes on button press in loadfilepushbutton.
+function loadfilepushbutton_Callback(hObject, eventdata, handles)
+global fullpath %Makes fullpath a global variable for further functions
+% hObject    handle to loadfilepushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[fileName,pathname] = uigetfile('*.wav','Select the sound file'); %Creates a dialog box to open the file and outputs both the name of the file and the path where it is found
+set(handles.answertext, 'String', 'File has been successfully loaded. Please choose an option below:'); %Once a file is loaded, message is printed to GUI to inform user
+fullpath = [pathname,fileName]; %Concatenates filename and pathname for use in further functions
+
+
+
+
+% --- Executes on button press in playfilepushbutton.
+function playfilepushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to playfilepushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global fullpath
+if exist(fullpath) == 0 %If a file hasn't been selected by the user,
+    set(handles.answertext, 'String', 'ERROR: There is no file loaded. Please load a file and then reselect an option.'); %Error message is displayed in GUI and function is not executed
+else %Otherwise,
+[y, f] = wavread(fullpath); %The file is read and the sample is output in the y variable and the frequency in the f variable
+wavplay(y, f); %Wave file is played
+end
+
+
+% --- Executes on button press in signaldetailspushbutton.
+function signaldetailspushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to signaldetailspushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global fullpath
+if exist(fullpath) == 0
+    set(handles.answertext, 'String', 'ERROR: There is no file loaded. Please load a file and then reselect an option.');
+else
+[m d] = wavfinfo(fullpath); %Acquires information about the wave file
+set(handles.answertext, 'String', d); %Outputs to the GUI the information asked for by the user when button is pressed
+end
+
+
+% --- Executes on button press in sampleratepushbutton.
+function sampleratepushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to sampleratepushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global fullpath
+if exist(fullpath) == 0
+    set(handles.answertext, 'String', 'ERROR: There is no file loaded. Please load a file and then reselect an option.');
+else
+[y, Fs, nbits] = wavread(fullpath); %Gets the sample, frequency, and bits per sample values of sound file
+str = ['The sample rate is: ',num2str(Fs),' Hz and there are ',num2str(nbits),' bits per sample']; %Creates a string that concatenates all of the data needed
+set(handles.answertext, 'String', str); %Updates the GUI with the string defined in the line above
+end
+
+
+
+% --- Executes on button press in samplelengthpushbutton.
+function samplelengthpushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to samplelengthpushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global fullpath
+global length1
+if exist(fullpath) == 0
+    set(handles.answertext, 'String', 'ERROR: There is no file loaded. Please load a file and then reselect an option.');
+else
+info = mmfileinfo(fullpath); %Gets file information about the loaded file
+length1 = info.Duration; %Uses the Duration structure to get the length of the file
+str = ['This file is ',num2str(length1),' seconds long.']; %Creates a string to concatenate all the information and data
+set (handles.answertext, 'String' , str); %Updates the GUI with the string defined in the line above
+end
+
+% --- Executes on button press in entiresignalvstimepushbutton.
+function entiresignalvstimepushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to entiresignalvstimepushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global fullpath
+if exist(fullpath) == 0
+    set(handles.answertext, 'String', 'ERROR: There is no file loaded. Please load a file and then reselect an option.');
+else
+[y,fs]=wavread(fullpath); %Reads the loaded file
+left = y(:,1); %Defines the left variable as all the rows in y and creates a vector of those values
+time=(1/fs)*length(left); %Defines the time variable as the product of 1 over the file's frequency, times the length of the left vector
+t=linspace(0,time,length(left)); %Defines variable t, so that the number of values is equivalent to the number of values in the left vector
+figure(1) %Creates a figure
+plot(t,y); %Plots the left vector (signal) vs. the t vector (time)
+xlabel('Time (s)'); %Labels the x-axis
+ylabel('Normalized Amplitude'); %Labels the y-axis
+title('Entire Signal vs. Time Plot of Selected File'); %Titles the plot
+end
+
+
+% --- Executes on button press in consecutivepushbutton.
+function consecutivepushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to consecutivepushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global fullpath
+global length1
+if exist(fullpath) == 0
+    set(handles.answertext, 'String', 'ERROR: There is no file loaded. Please load a file and then reselect an option.');
+else
+[y,fs]=wavread(fullpath); %Reads the wav file
+[rows, cols] = size(y); %Gets the number of rows and columns in y
+fsoption = rows - 1000; %Defines variable fsoption as the number of rows in y minus 1000, thus creating the maximum value a user can enter since there has to be 1000 consecutive samples from the number defined by the user
+j = str2num(get(handles.edit2, 'String')); %Defines variable j as the value entered by the user and converted from a string to a number
+if isempty(j) || j > fsoption || j <= 0 %If the user does not enter anything for j, or if the value of j is larger than the maximum they can enter, or if they choose a value less than 0,
+    set(handles.answertext, 'String', 'ERROR: There is an error with the value entered. Please try again'); %An error message is displayed in the GUI
+else %Otherwise
+    j2 = j + 1000; %Defines j2 (the end) as the user inputted value, plus 1000
+    [y,fs] = wavread(fullpath, [j j2]); %Now reads the wav file from the user entered value to the user entered value plus 1000
+    left = y(:,1); %Defines the left variable as all the rows in y and creates a vector of those values
+    time=(1/fs)*length(left); %Defines the time variable as the product of 1 over the file's frequency, times the length of the left vector
+    mintime = (j/(fs*length1))*length1; %Equation to find the time value for user specified sample number
+    maxtime = (j2/(fs*length1))*length1; %Equation to find the time value for user specified sample number plus 1000
+    t=linspace(mintime,maxtime,length(left)); %Defines variable t, so that the number of values is equivalent to the number of values in the left vector
+figure(2) %Creates a figure
+plot(t,left); %Plots the left vector (signal) vs. the t vector (time)
+xlabel('Time (s)'); %Labels the x-axis
+ylabel('Amplitude (Signal) (dB)'); %Labels the y-axis
+title('1000 Conseuctive Signal Samples vs. Time Plot of Selected File'); %Titles the plot
+axis([mintime maxtime -0.5 0.5]); %Defines x-axis from minimum time to maximum time and y axis from -0.5 to 0.5 (lowest and highest possible y-values) 
+end %Ends the if statement
+end %Ends the other if statement
+
+
+% --- Executes on button press in amplitudepushbutton.
+function amplitudepushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to amplitudepushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global fullpath
+if exist(fullpath) == 0
+    set(handles.answertext, 'String', 'ERROR: There is no file loaded. Please load a file and then reselect an option.');
+else
+[y,fs]=wavread(fullpath); %Reads the wav file
+data=2*abs(fft(y))/length(y); %Analyzes the components of the file's frequncies
+x=linspace(0,fs/2,length(data)); %Creates a vector of frequencies of the same length of the components defined in the data variable
+nyquist=num2str(fs/2); %Converts the value of fs/2 (definition of the nyquist frequency) into a string
+[data_max index] = max(data); %Finds the highest value in the data 
+f_principal = num2str(x(index)); %Finds the frequency of the highest value in the data and converts that value to a string
+str1 = ['The Nyquist frequency is ',nyquist,'Hz.']; %Concatenates a string for the Nyquist frequency
+str2 = [' The strongest (principal) frequency is ',f_principal,'Hz.']; %Concatenate a string for the Principal Frequency
+str3 = [str1,str2]; %Concatenates all three strings
+set(handles.answertext, 'String', str3); %Updates GUI to display str4, the concatenation of the three strings
+end
+
+
+% --- Executes on button press in frequencypushbutton.
+function frequencypushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to frequencypushbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global fullpath
+if exist(fullpath) == 0
+    set(handles.answertext, 'String', 'ERROR: There is no file loaded. Please load a file and then reselect an option.');
+else
+[y fs] = wavread(fullpath); %Reads the wav file  
+t = linspace(0,length(y)/fs,length(y)); %Creates a time vector that corresponds with the values in the wav file
+data=2*abs(fft(y))/length(y); %Creates a value of analysis of the values from data from the wav file
+warning off 
+%{
+MATLAB displays a warning when evaluating the next line of certain sound files (ex: apollo13prob.wav)
+because end is used instead of an integer. However, due to different files being 
+used, a warning may or may not be generated. Turning off warnings will avoid confusing the end user
+even though no error occurs, and everything works fine, it is best to avoid any messages being displayed
+which may confuse the user.
+%}
+data = data(1:end/2); %Removes values at the end which are not needed for analysis
+f_nyquist = fs/2; %Calculates the nyquist freuqncy
+x=linspace(0,f_nyquist,length(data)); %Creates a vector of frequencies that corresponds with the data variable
+[data_max index] = max(data); %Finds the largest value in the y variable
+f_principle = x(index); %Looks up the frequency that corresponds with the largest value
+figure(4) %Creates a figure
+plot(x,data,f_principle,data_max,'*') %Generates the plot
+xlabel('Frequency (Hz)') %Labels the x-axis
+ylabel('Magnitude') %Labels the y-axis
+title('Frequency vs Magnitude(Normalized) Plot of Loaded File'); %Titles the plot
+warning on
+%Turns it back on for further execution in case a legitimate warning needs
+%to be displayed
+end
+
+
+
+function edit2_Callback(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit2 as text
+%        str2double(get(hObject,'String')) returns contents of edit2 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
